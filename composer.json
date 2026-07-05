@@ -1,0 +1,12 @@
+{
+    "name": "vijaymahes/travel-management-system",
+    "description": "PHP and MySQL based Travel Management System with Bootstrap",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Vijay Mahes",
+            "email": "Vijaypradhap2004@gmail.com"
+        }
+    ],
+    "require": {}
+}
