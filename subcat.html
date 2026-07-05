@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subcategories - Travel Management System</title>
+    <link rel="stylesheet" href="css/static-style.css">
+    <script src="js/database.js"></script>
+    <script src="js/theme.js"></script>
+</head>
+<body>
+
+    <div class="category-page-container">
+        <aside class="sidebar-list">
+            <h3 class="sidebar-title">Categories</h3>
+            <div id="categories-sidebar-container">
+                <!-- Dynamically loaded categories -->
+            </div>
+        </aside>
+        
+        <section style="flex: 1;">
+            <h2 class="sidebar-title" id="selected-category-title">Subcategories</h2>
+            <div class="packages-list" id="subcategories-container">
+                <!-- Dynamically loaded subcategories -->
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const catId = Number(urlParams.get('catid') || 1);
+
+            // Renders sidebar categories
+            const categories = db.getCategories();
+            const sidebarContainer = document.getElementById("categories-sidebar-container");
+            sidebarContainer.innerHTML = categories.map(cat => `
+                <a href="subcat.html?catid=${cat.Cat_id}" class="sidebar-item ${cat.Cat_id === catId ? 'active' : ''}" style="display: block; text-decoration: none; margin-bottom: 0.5rem;">
+                    <b>${cat.Cat_name}</b>
+                </a>
+            `).join('');
+
+            const selectedCat = categories.find(c => c.Cat_id === catId);
+            if (selectedCat) {
+                document.getElementById("selected-category-title").innerText = `${selectedCat.Cat_name} Subcategories`;
+            }
+
+            // Renders subcategories
+            const subcats = db.getSubcategories().filter(s => Number(s.Catid) === catId);
+            const subContainer = document.getElementById("subcategories-container");
+
+            if (subcats.length === 0) {
+                subContainer.innerHTML = `<p style="color: var(--text-muted)">No subcategories found for this category.</p>`;
+                return;
+            }
+
+            subContainer.innerHTML = subcats.map(s => `
+                <div class="package-card-horizontal">
+                    <img src="${s.Pic}" onerror="this.src='images/t1.jpg'" class="package-img" alt="${s.Subcatname}">
+                    <div class="package-details">
+                        <div>
+                            <h3 class="package-title">${s.Subcatname}</h3>
+                            <p style="color: var(--text-muted); font-size: 0.95rem;">${s.Detail}</p>
+                        </div>
+                        <a href="package.html?subcatid=${s.Subcatid}&catid=${catId}" class="btn-primary" style="align-self: flex-start; margin-top: 1rem; text-decoration: none;">View Packages</a>
+                    </div>
+                </div>
+            `).join('');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Package Details - Travel Management System</title>
+    <link rel="stylesheet" href="css/static-style.css">
+    <script src="js/database.js"></script>
+    <script src="js/theme.js"></script>
+</head>
+<body>
+
+    <div class="detail-grid" id="package-detail-container">
+        <!-- Rendered by JS -->
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const pid = Number(urlParams.get('pid') || 1);
+            const catId = Number(urlParams.get('catid') || 1);
+            const subcatId = Number(urlParams.get('subcatid') || 1);
+
+            const pack = db.getPackages().find(p => p.Packid === pid);
+            const container = document.getElementById("package-detail-container");
+
+            if (!pack) {
+                container.innerHTML = `<h2>Package not found.</h2>`;
+                return;
+            }
+
+            container.innerHTML = `
+                <div>
+                    <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">${pack.Packname}</h1>
+                    <div class="package-price" style="font-size: 1.8rem; margin-bottom: 2rem;">₹${Number(pack.Packprice).toLocaleString('en-IN')}</div>
+                    
+                    <div class="image-gallery-holder">
+                        <img src="${pack.Pic1}" onerror="this.src='images/t1.jpg'" alt="view 1">
+                        <img src="${pack.Pic2}" onerror="this.src='images/t2.jpg'" alt="view 2">
+                        <img src="${pack.Pic3}" onerror="this.src='images/t3.jpg'" alt="view 3">
+                    </div>
+
+                    <h3 class="sidebar-title">Tour Description</h3>
+                    <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-muted);">${pack.Detail}</p>
+                </div>
+
+                <aside class="enquiry-form-card">
+                    <h3 class="sidebar-title" style="margin-bottom: 1.5rem;">Book / Make Enquiry</h3>
+                    <form onsubmit="handleEnquirySubmit(event, ${pack.Packid}, ${catId}, ${subcatId})">
+                        <div class="form-group">
+                            <label>Your Name</label>
+                            <input type="text" id="enq-name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <select id="enq-gender" class="form-control">
+                                <option>Male</option>
+                                <option>Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Mobile No</label>
+                            <input type="text" id="enq-mobile" class="form-control" required pattern="[0-9]{10,12}">
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="enq-email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Days</label>
+                            <input type="number" id="enq-days" class="form-control" value="1" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Adults</label>
+                            <input type="number" id="enq-adults" class="form-control" value="1" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Children</label>
+                            <input type="number" id="enq-children" class="form-control" value="0" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea id="enq-msg" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary" style="width: 100%;">Submit Enquiry</button>
+                    </form>
+                </aside>
+            `;
+        });
+
+        function handleEnquirySubmit(event, packId, catId, subcatId) {
+            event.preventDefault();
+            const pack = db.getPackages().find(p => p.Packid === packId);
+            const enquiries = db.getEnquiries();
+            
+            const newEnquiry = {
+                packName: pack.Packname,
+                name: document.getElementById("enq-name").value,
+                gender: document.getElementById("enq-gender").value,
+                mobile: document.getElementById("enq-mobile").value,
+                email: document.getElementById("enq-email").value,
+                days: document.getElementById("enq-days").value,
+                adults: document.getElementById("enq-adults").value,
+                children: document.getElementById("enq-children").value,
+                message: document.getElementById("enq-msg").value
+            };
+
+            enquiries.push(newEnquiry);
+            db.saveEnquiries(enquiries);
+
+            alert("Your Booking Enquiry has been submitted successfully!");
+            window.location.href = `package.html?subcatid=${subcatId}&catid=${catId}`;
+        }
+    </script>
+</body>
+</html>

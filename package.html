@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Packages - Travel Management System</title>
+    <link rel="stylesheet" href="css/static-style.css">
+    <script src="js/database.js"></script>
+    <script src="js/theme.js"></script>
+</head>
+<body>
+
+    <div class="category-page-container">
+        <aside class="sidebar-list">
+            <h3 class="sidebar-title">Categories</h3>
+            <div id="categories-sidebar-container">
+                <!-- Dynamically loaded categories -->
+            </div>
+        </aside>
+        
+        <section style="flex: 1;">
+            <h2 class="sidebar-title" id="selected-subcat-title">Packages</h2>
+            <div class="packages-list" id="packages-container">
+                <!-- Dynamically loaded packages -->
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const subcatId = Number(urlParams.get('subcatid') || 1);
+            const catId = Number(urlParams.get('catid') || 1);
+
+            // Renders sidebar categories
+            const categories = db.getCategories();
+            const sidebarContainer = document.getElementById("categories-sidebar-container");
+            sidebarContainer.innerHTML = categories.map(cat => `
+                <a href="subcat.html?catid=${cat.Cat_id}" class="sidebar-item ${cat.Cat_id === catId ? 'active' : ''}" style="display: block; text-decoration: none; margin-bottom: 0.5rem;">
+                    <b>${cat.Cat_name}</b>
+                </a>
+            `).join('');
+
+            // Set subcategory title
+            const subcat = db.getSubcategories().find(s => s.Subcatid === subcatId);
+            if (subcat) {
+                document.getElementById("selected-subcat-title").innerText = `${subcat.Subcatname} Packages`;
+            }
+
+            // Renders packages
+            const packages = db.getPackages().filter(p => Number(p.Subcategory) === subcatId);
+            const packageContainer = document.getElementById("packages-container");
+
+            if (packages.length === 0) {
+                packageContainer.innerHTML = `<p style="color: var(--text-muted)">No packages found in this subcategory.</p>`;
+                return;
+            }
+
+            packageContainer.innerHTML = packages.map(p => `
+                <div class="package-card-horizontal">
+                    <img src="${p.Pic1}" onerror="this.src='images/t1.jpg'" class="package-img" alt="${p.Packname}">
+                    <div class="package-details">
+                        <div>
+                            <h3 class="package-title">${p.Packname}</h3>
+                            <div class="package-price">₹${Number(p.Packprice).toLocaleString('en-IN')}</div>
+                            <p style="color: var(--text-muted); font-size: 0.95rem;">${p.Detail.substring(0, 180)}...</p>
+                        </div>
+                        <a href="detail.html?pid=${p.Packid}&catid=${catId}&subcatid=${subcatId}" class="btn-primary" style="align-self: flex-start; margin-top: 1rem; text-decoration: none;">View Details</a>
+                    </div>
+                </div>
+            `).join('');
+        });
+    </script>
+</body>
+</html>

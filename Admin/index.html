@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Travel Management System</title>
+    <link rel="stylesheet" href="../css/static-style.css">
+    <script src="../js/database.js"></script>
+    <script src="../js/theme.js"></script>
+</head>
+<body>
+
+    <script>
+        // Authentication Guard
+        if (sessionStorage.getItem("isAdminLoggedIn") !== "true") {
+            window.location.href = "loginform.html";
+        }
+    </script>
+
+    <div class="admin-grid">
+        <aside class="admin-sidebar">
+            <h3 class="sidebar-title">Management</h3>
+            <div class="sidebar-item active" id="tab-enquiries" onclick="showAdminSection('enquiries')">Enquiries</div>
+            <div class="sidebar-item" id="tab-packages" onclick="showAdminSection('packages')">Manage Packages</div>
+            <div class="sidebar-item" id="tab-add-package" onclick="showAdminSection('add-package')">Add Package</div>
+            <div class="sidebar-item" onclick="handleAdminLogout()" style="color: #ef4444; margin-top: auto;">Log Out</div>
+        </aside>
+        
+        <section class="admin-content">
+            <!-- Enquiries Admin Section -->
+            <div id="admin-sec-enquiries">
+                <h2 class="sidebar-title">Manage Customer Enquiries</h2>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Package</th>
+                            <th>Name</th>
+                            <th>Contact</th>
+                            <th>Details</th>
+                            <th>Message</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="enquiries-table-body">
+                        <!-- Loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Packages Admin Section -->
+            <div id="admin-sec-packages" style="display: none;">
+                <h2 class="sidebar-title">Existing Travel Packages</h2>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Package Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="packages-table-body">
+                        <!-- Loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Add Package Admin Section -->
+            <div id="admin-sec-add-package" style="display: none;">
+                <h2 class="sidebar-title">Publish New Package</h2>
+                <form onsubmit="handleAddPackage(event)">
+                    <div class="form-group">
+                        <label>Package Name</label>
+                        <input type="text" id="add-pack-name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="add-pack-cat" class="form-control">
+                            <!-- Loaded dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Price (INR)</label>
+                        <input type="number" id="add-pack-price" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Detail Description</label>
+                        <textarea id="add-pack-detail" class="form-control" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Add Package</button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            renderEnquiries();
+            renderPackages();
+            renderCategorySelect();
+        });
+
+        function showAdminSection(sec) {
+            document.querySelectorAll(".admin-sidebar .sidebar-item").forEach(item => item.classList.remove("active"));
+            document.getElementById(`tab-${sec}`).classList.add("active");
+
+            document.getElementById("admin-sec-enquiries").style.display = sec === 'enquiries' ? 'block' : 'none';
+            document.getElementById("admin-sec-packages").style.display = sec === 'packages' ? 'block' : 'none';
+            document.getElementById("admin-sec-add-package").style.display = sec === 'add-package' ? 'block' : 'none';
+        }
+
+        function renderEnquiries() {
+            const enquiries = db.getEnquiries();
+            const tbody = document.getElementById("enquiries-table-body");
+            
+            if (enquiries.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="color: var(--text-muted); text-align: center;">No enquiries received yet.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = enquiries.map((e, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${e.packName}</td>
+                    <td>${e.name}</td>
+                    <td>${e.email}<br>${e.mobile}</td>
+                    <td>${e.days} Days (${e.adults} Ad / ${e.children} Ch)</td>
+                    <td>${e.message}</td>
+                    <td><span style="color: var(--accent); font-weight: 600;">Pending</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderPackages() {
+            const packages = db.getPackages();
+            const categories = db.getCategories();
+            const tbody = document.getElementById("packages-table-body");
+
+            tbody.innerHTML = packages.map((p, index) => {
+                const catName = categories.find(c => c.Cat_id === Number(p.Category))?.Cat_name || 'N/A';
+                return `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${p.Packname}</td>
+                        <td>${catName}</td>
+                        <td>₹${Number(p.Packprice).toLocaleString('en-IN')}</td>
+                        <td><button class="filter-btn" style="padding: 0.2rem 0.8rem;" onclick="deletePackage(${p.Packid})">Delete</button></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderCategorySelect() {
+            const categories = db.getCategories();
+            const select = document.getElementById("add-pack-cat");
+            select.innerHTML = categories.map(c => `
+                <option value="${c.Cat_id}">${c.Cat_name}</option>
+            `).join('');
+        }
+
+        function handleAddPackage(event) {
+            event.preventDefault();
+            const packages = db.getPackages();
+            const newPack = {
+                Packid: Date.now(),
+                Packname: document.getElementById("add-pack-name").value,
+                Category: Number(document.getElementById("add-pack-cat").value),
+                Subcategory: 1, // Default Subcategory
+                Packprice: Number(document.getElementById("add-pack-price").value),
+                Pic1: "../images/t1.jpg",
+                Pic2: "../images/t2.jpg",
+                Pic3: "../images/t3.jpg",
+                Detail: document.getElementById("add-pack-detail").value
+            };
+
+            packages.push(newPack);
+            db.savePackages(packages);
+            alert("New package published successfully!");
+            
+            // Reset Form and reload list
+            document.getElementById("add-pack-name").value = "";
+            document.getElementById("add-pack-price").value = "";
+            document.getElementById("add-pack-detail").value = "";
+            renderPackages();
+            showAdminSection('packages');
+        }
+
+        function deletePackage(packId) {
+            if (confirm("Are you sure you want to delete this package?")) {
+                let packages = db.getPackages();
+                packages = packages.filter(p => p.Packid !== packId);
+                db.savePackages(packages);
+                renderPackages();
+            }
+        }
+
+        function handleAdminLogout() {
+            sessionStorage.removeItem("isAdminLoggedIn");
+            window.location.href = "loginform.html";
+        }
+    </script>
+</body>
+</html>

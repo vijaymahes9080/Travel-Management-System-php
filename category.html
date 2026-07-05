@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories - Travel Management System</title>
+    <link rel="stylesheet" href="css/static-style.css">
+    <script src="js/database.js"></script>
+    <script src="js/theme.js"></script>
+</head>
+<body>
+
+    <div class="category-page-container">
+        <aside class="sidebar-list">
+            <h3 class="sidebar-title">Categories</h3>
+            <div id="categories-sidebar-container">
+                <!-- Dynamically loaded categories -->
+            </div>
+        </aside>
+        
+        <section class="about-card" style="flex: 1;">
+            <h2 class="sidebar-title">Welcome to Go Travel & Tourism Ltd</h2>
+            <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.8;">
+                We offer the best curated travel packages, customized and structured specifically to align with your dream vacation goals. Click on any category in the sidebar to browse our special selection of subcategories and tours.
+            </p>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const categories = db.getCategories();
+            const container = document.getElementById("categories-sidebar-container");
+            
+            container.innerHTML = categories.map(cat => `
+                <a href="subcat.html?catid=${cat.Cat_id}" class="sidebar-item" style="display: block; text-decoration: none; margin-bottom: 0.5rem;">
+                    <b>${cat.Cat_name}</b>
+                </a>
+            `).join('');
+        });
+    </script>
+</body>
+</html>

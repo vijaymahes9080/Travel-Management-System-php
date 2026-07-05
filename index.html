@@ -5,451 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Travel Management System</title>
     <link rel="stylesheet" href="css/static-style.css">
+    <script src="js/database.js"></script>
+    <script src="js/theme.js"></script>
 </head>
 <body>
 
-    <!-- Header Navigation -->
-    <header class="custom-header">
-        <div class="nav-container">
-            <a onclick="navigateTo('home')" class="logo-text">
-                🌍 Go <span>Travel</span>
-            </a>
-            <ul class="nav-menu">
-                <li><a onclick="navigateTo('home')" id="nav-home" class="active">Home</a></li>
-                <li><a onclick="navigateTo('category')" id="nav-category">Categories</a></li>
-                <li><a onclick="navigateTo('admin')" id="nav-admin">Admin Dashboard</a></li>
-            </ul>
+    <!-- Hero Section -->
+    <section class="hero-section" id="section-1">
+        <div class="hero-content">
+            <h1>Discover Your Next <span>Adventure</span></h1>
+            <p>Explore beautiful packages, select curated destinations, and book with ease.</p>
+            <a href="category.html" class="btn-primary">View Packages</a>
         </div>
-    </header>
+    </section>
 
-    <!-- Main Content Containers -->
-    <main id="main-content">
-        <!-- Views will be dynamically loaded here by router.js -->
-    </main>
+    <!-- About Us Section -->
+    <section class="section-padding" id="section-2">
+        <h2 class="section-title">About Us</h2>
+        <div class="grid-3">
+            <div class="about-card">
+                <h3>Our Vision</h3>
+                <p>To redefine custom travel adventures by curating safe, memorable, and beautiful destination tours for families and individuals alike.</p>
+            </div>
+            <div class="about-card">
+                <h3>Our Mission</h3>
+                <p>To provide high-quality planning, transparent pricing, and world-class itinerary setup so that your only focus is enjoying the vacation.</p>
+            </div>
+            <div class="about-card">
+                <h3>Safety Info</h3>
+                <p>All tour groups are backed by licensed travel insurance, professional guides, and local emergency coordination desks.</p>
+            </div>
+        </div>
+    </section>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 Go Travel & Tourism Ltd. Designed for Vijay Mahes. All Rights Reserved.</p>
-    </footer>
+    <!-- Gallery Section -->
+    <section class="section-padding" id="section-3" style="background-color: #1e293b;">
+        <h2 class="section-title">Gallery Highlights</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item"><img src="images/t1.jpg" alt="Lapland"><div class="gallery-overlay"><h4>Lapland Holiday</h4></div></div>
+            <div class="gallery-item"><img src="images/t2.jpg" alt="Taj Mahal"><div class="gallery-overlay"><h4>Taj Mahal, Agra</h4></div></div>
+            <div class="gallery-item"><img src="images/t3.jpg" alt="Canada"><div class="gallery-overlay"><h4>Canadian Rockies</h4></div></div>
+            <div class="gallery-item"><img src="images/t4.jpg" alt="Thailand"><div class="gallery-overlay"><h4>Thailand Beach</h4></div></div>
+            <div class="gallery-item"><img src="images/t5.jpg" alt="Italy"><div class="gallery-overlay"><h4>Amalfi Coast, Italy</h4></div></div>
+            <div class="gallery-item"><img src="images/t6.jpg" alt="Haridwar"><div class="gallery-overlay"><h4>Ganges, Haridwar</h4></div></div>
+        </div>
+    </section>
 
-    <!-- App JavaScript -->
+    <!-- Contact Us Section -->
+    <section class="section-padding" id="section-5">
+        <h2 class="section-title">Contact Us</h2>
+        <div style="max-width: 600px; margin: 0 auto;" class="about-card">
+            <form onsubmit="handleContactSubmit(event)">
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <input type="text" id="contact-name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="contact-email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea id="contact-msg" class="form-control" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Send Message</button>
+            </form>
+        </div>
+    </section>
+
     <script>
-        // Data Store (using localStorage to allow dynamic updates on GitHub Pages)
-        const INITIAL_CATEGORIES = [
-            { Cat_id: 1, Cat_name: "Family Tours" },
-            { Cat_id: 2, Cat_name: "Religious Tours" },
-            { Cat_id: 3, Cat_name: "Adventure Tours" },
-            { Cat_id: 4, Cat_name: "Special Event Tours" },
-            { Cat_id: 5, Cat_name: "National Parks" },
-            { Cat_id: 6, Cat_name: "Themed Vacations" },
-            { Cat_id: 7, Cat_name: "Small Group Tours" }
-        ];
-
-        const INITIAL_SUBCATEGORIES = [
-            { Subcatid: 1, Subcatname: "Family holiday in Lapland", Catid: 1, Pic: "images/t1.jpg", Detail: "A brilliant balance of cosy winter cottage accommodation and adventure." },
-            { Subcatid: 2, Subcatname: "Family holiday to India", Catid: 1, Pic: "images/t2.jpg", Detail: "This relaxing holiday manages all of the organisational leg-work for you." },
-            { Subcatid: 3, Subcatname: "Canada family holiday", Catid: 1, Pic: "images/t3.jpg", Detail: "Our only big Canadian adventure holiday for families, with wilderness wonders." },
-            { Subcatid: 4, Subcatname: "Family holiday in Thailand", Catid: 1, Pic: "images/t4.jpg", Detail: "This is a real family adventure taking in every face of Thailand." },
-            { Subcatid: 5, Subcatname: "Family holiday in Italy", Catid: 1, Pic: "images/t5.jpg", Detail: "World-famous volcanoes, shimmering coastal towns and history lessons." },
-            { Subcatid: 6, Subcatname: "Religious Tours in India", Catid: 2, Pic: "images/t6.jpg", Detail: "India is a land where various gods and goddess are worshiped over the years." },
-            { Subcatid: 7, Subcatname: "Religious Tours in Italy", Catid: 2, Pic: "images/t7.jpg", Detail: "Religious tours in Italy tie many important Italian religious destinations." },
-            { Subcatid: 8, Subcatname: "Adventure Tours in Mumbai", Catid: 3, Pic: "images/t8.jpg", Detail: "Adventure Education Tours is recognized as India's fastest growing Travel company." }
-        ];
-
-        const INITIAL_PACKAGES = [
-            { Packid: 1, Packname: "Christmas Adventure in Lapland", Category: 1, Subcategory: 1, Packprice: 20000, Pic1: "images/t1.jpg", Pic2: "images/t2.jpg", Pic3: "images/t3.jpg", Detail: "Spend Christmas where Santa Claus lives! Meet Santa in person at the world-famous Santa Claus Village, enjoy the thrill of a dog sled ride, and learn about the unique Sami culture at a reindeer farm." },
-            { Packid: 2, Packname: "Agra Family Tour", Category: 1, Subcategory: 2, Packprice: 10000, Pic1: "images/t2.jpg", Pic2: "images/t3.jpg", Pic3: "images/t4.jpg", Detail: "Strengthen family bonds and rejuvenate love in the company of Agra's pleasant weather, beautiful sceneries, and delightful food. Includes Taj Mahal tour." },
-            { Packid: 3, Packname: "Holidays in Italy", Category: 1, Subcategory: 5, Packprice: 20000, Pic1: "images/t5.jpg", Pic2: "images/t6.jpg", Pic3: "images/t7.jpg", Detail: "Enjoy golden beaches, sparkling seas, beautiful countryside, exciting cities, and great cuisine on family holidays in Italy." },
-            { Packid: 4, Packname: "Main attraction in Thailand", Category: 1, Subcategory: 4, Packprice: 400000, Pic1: "images/t4.jpg", Pic2: "images/t5.jpg", Pic3: "images/t6.jpg", Detail: "Fascinating cultures, a nation that adores children, beautiful beaches in world-famous resorts, and a well-trodden tourist trail." },
-            { Packid: 6, Packname: "Haridwar Pilgrimage", Category: 2, Subcategory: 6, Packprice: 3000, Pic1: "images/t6.jpg", Pic2: "images/t7.jpg", Pic3: "images/t8.jpg", Detail: "Haridwar means the 'Gateway to the abode of the gods'. Witness the Ganga Aarti and explore religious shrines." }
-        ];
-
-        // Init database in localStorage if not exists
-        if (!localStorage.getItem("categories")) localStorage.setItem("categories", JSON.stringify(INITIAL_CATEGORIES));
-        if (!localStorage.getItem("subcategories")) localStorage.setItem("subcategories", JSON.stringify(INITIAL_SUBCATEGORIES));
-        if (!localStorage.getItem("packages")) localStorage.setItem("packages", JSON.stringify(INITIAL_PACKAGES));
-        if (!localStorage.getItem("enquiries")) localStorage.setItem("enquiries", JSON.stringify([]));
-
-        // State Getters
-        const getCategories = () => JSON.parse(localStorage.getItem("categories"));
-        const getSubcategories = () => JSON.parse(localStorage.getItem("subcategories"));
-        const getPackages = () => JSON.parse(localStorage.getItem("packages"));
-        const getEnquiries = () => JSON.parse(localStorage.getItem("enquiries"));
-
-        let currentCategory = 1;
-        let selectedPackageId = null;
-        let isAdminLoggedIn = false;
-
-        // Router
-        function navigateTo(view) {
-            // Update Active Nav Link
-            document.querySelectorAll(".nav-menu a").forEach(link => link.classList.remove("active"));
-            const targetNav = document.getElementById(`nav-${view}`);
-            if (targetNav) targetNav.classList.add("active");
-
-            const mainContent = document.getElementById("main-content");
-
-            if (view === 'home') {
-                mainContent.innerHTML = renderHomeView();
-            } else if (view === 'category') {
-                mainContent.innerHTML = renderCategoryView();
-                selectCategory(currentCategory);
-            } else if (view === 'admin') {
-                if (isAdminLoggedIn) {
-                    mainContent.innerHTML = renderAdminDashboard();
-                } else {
-                    mainContent.innerHTML = renderAdminLogin();
-                }
-            } else if (view === 'detail') {
-                mainContent.innerHTML = renderDetailView();
-            }
-            window.scrollTo(0, 0);
-        }
-
-        // HOME VIEW
-        function renderHomeView() {
-            return `
-                <section class="hero-section">
-                    <div class="hero-content">
-                        <h1>Discover Your Next <span>Adventure</span></h1>
-                        <p>Explore beautiful packages, select curated destinations, and book with ease.</p>
-                        <button onclick="navigateTo('category')" class="btn-primary">View Packages</button>
-                    </div>
-                </section>
-
-                <section class="section-padding">
-                    <h2 class="section-title">About Us</h2>
-                    <div class="grid-3">
-                        <div class="about-card">
-                            <h3>Our Vision</h3>
-                            <p>To redefine custom travel adventures by curating safe, memorable, and beautiful destination tours for families and individuals alike.</p>
-                        </div>
-                        <div class="about-card">
-                            <h3>Our Mission</h3>
-                            <p>To provide high-quality planning, transparent pricing, and world-class itinerary setup so that your only focus is enjoying the vacation.</p>
-                        </div>
-                        <div class="about-card">
-                            <h3>Safety Info</h3>
-                            <p>All tour groups are backed by licensed travel insurance, professional guides, and local emergency coordination desks.</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="section-padding" style="background-color: #1e293b;">
-                    <h2 class="section-title">Gallery Highlights</h2>
-                    <div class="gallery-grid">
-                        <div class="gallery-item"><img src="images/t1.jpg" alt="Lapland"><div class="gallery-overlay"><h4>Lapland Holiday</h4></div></div>
-                        <div class="gallery-item"><img src="images/t2.jpg" alt="Taj Mahal"><div class="gallery-overlay"><h4>Taj Mahal, Agra</h4></div></div>
-                        <div class="gallery-item"><img src="images/t3.jpg" alt="Canada"><div class="gallery-overlay"><h4>Canadian Rockies</h4></div></div>
-                        <div class="gallery-item"><img src="images/t4.jpg" alt="Thailand"><div class="gallery-overlay"><h4>Thailand Beach</h4></div></div>
-                        <div class="gallery-item"><img src="images/t5.jpg" alt="Italy"><div class="gallery-overlay"><h4>Amalfi Coast, Italy</h4></div></div>
-                        <div class="gallery-item"><img src="images/t6.jpg" alt="Haridwar"><div class="gallery-overlay"><h4>Ganges, Haridwar</h4></div></div>
-                    </div>
-                </section>
-
-                <section class="section-padding">
-                    <h2 class="section-title">Contact Us</h2>
-                    <div style="max-width: 600px; margin: 0 auto;" class="about-card">
-                        <form onsubmit="handleContactSubmit(event)">
-                            <div class="form-group">
-                                <label>Your Name</label>
-                                <input type="text" id="contact-name" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Email Address</label>
-                                <input type="email" id="contact-email" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Message</label>
-                                <textarea id="contact-msg" class="form-control" rows="4" required></textarea>
-                            </div>
-                            <button type="submit" class="btn-primary" style="width: 100%;">Send Message</button>
-                        </form>
-                    </div>
-                </section>
-            `;
-        }
-
-        // CATEGORY VIEW
-        function renderCategoryView() {
-            const categories = getCategories();
-            let sidebarHTML = categories.map(cat => `
-                <div class="sidebar-item" id="cat-item-${cat.Cat_id}" onclick="selectCategory(${cat.Cat_id})">
-                    ${cat.Cat_name}
-                </div>
-            `).join('');
-
-            return `
-                <div class="category-page-container">
-                    <aside class="sidebar-list">
-                        <h3 class="sidebar-title">Categories</h3>
-                        ${sidebarHTML}
-                    </aside>
-                    <section>
-                        <h2 class="sidebar-title" id="selected-category-title">Select Category</h2>
-                        <div class="packages-list" id="category-packages-list">
-                            <!-- Dynamically loaded packages -->
-                        </div>
-                    </section>
-                </div>
-            `;
-        }
-
-        function selectCategory(catId) {
-            currentCategory = catId;
-            document.querySelectorAll(".sidebar-item").forEach(item => item.classList.remove("active"));
-            const activeItem = document.getElementById(`cat-item-${catId}`);
-            if (activeItem) activeItem.classList.add("active");
-
-            const categories = getCategories();
-            const selectedCat = categories.find(c => c.Cat_id === catId);
-            if (selectedCat) {
-                document.getElementById("selected-category-title").innerText = `${selectedCat.Cat_name} Packages`;
-            }
-
-            const packages = getPackages().filter(p => Number(p.Category) === Number(catId));
-            const container = document.getElementById("category-packages-list");
-
-            if (packages.length === 0) {
-                container.innerHTML = `<p style="color: var(--text-muted)">No packages available in this category yet.</p>`;
-                return;
-            }
-
-            container.innerHTML = packages.map(p => `
-                <div class="package-card-horizontal">
-                    <img src="${p.Pic1}" onerror="this.src='images/t1.jpg'" class="package-img" alt="${p.Packname}">
-                    <div class="package-details">
-                        <div>
-                            <h3 class="package-title">${p.Packname}</h3>
-                            <div class="package-price">₹${Number(p.Packprice).toLocaleString('en-IN')}</div>
-                            <p style="color: var(--text-muted); font-size: 0.95rem;">${p.Detail.substring(0, 180)}...</p>
-                        </div>
-                        <button onclick="viewPackageDetails(${p.Packid})" class="btn-primary" style="align-self: flex-start; margin-top: 1rem;">View Details</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // VIEW DETAILS
-        function viewPackageDetails(packId) {
-            selectedPackageId = packId;
-            navigateTo('detail');
-        }
-
-        function renderDetailView() {
-            const pack = getPackages().find(p => p.Packid === selectedPackageId);
-            if (!pack) return `<p>Package not found.</p>`;
-
-            return `
-                <div class="detail-grid">
-                    <div>
-                        <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">${pack.Packname}</h1>
-                        <div class="package-price" style="font-size: 1.8rem; margin-bottom: 2rem;">₹${Number(pack.Packprice).toLocaleString('en-IN')}</div>
-                        
-                        <div class="image-gallery-holder">
-                            <img src="${pack.Pic1}" onerror="this.src='images/t1.jpg'" alt="view 1">
-                            <img src="${pack.Pic2}" onerror="this.src='images/t2.jpg'" alt="view 2">
-                            <img src="${pack.Pic3}" onerror="this.src='images/t3.jpg'" alt="view 3">
-                        </div>
-
-                        <h3 class="sidebar-title">Tour Description</h3>
-                        <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-muted);">${pack.Detail}</p>
-                    </div>
-
-                    <aside class="enquiry-form-card">
-                        <h3 class="sidebar-title" style="margin-bottom: 1.5rem;">Book / Make Enquiry</h3>
-                        <form onsubmit="handleEnquirySubmit(event, ${pack.Packid})">
-                            <div class="form-group">
-                                <label>Your Name</label>
-                                <input type="text" id="enq-name" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Gender</label>
-                                <select id="enq-gender" class="form-control">
-                                    <option>Male</option>
-                                    <option>Female</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Mobile No</label>
-                                <input type="text" id="enq-mobile" class="form-control" required pattern="[0-9]{10,12}">
-                            </div>
-                            <div class="form-group">
-                                <label>Email Address</label>
-                                <input type="email" id="enq-email" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Number of Days</label>
-                                <input type="number" id="enq-days" class="form-control" value="1" min="1" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Adults</label>
-                                <input type="number" id="enq-adults" class="form-control" value="1" min="1" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Children</label>
-                                <input type="number" id="enq-children" class="form-control" value="0" min="0" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Message</label>
-                                <textarea id="enq-msg" class="form-control" rows="3" required></textarea>
-                            </div>
-                            <button type="submit" class="btn-primary" style="width: 100%;">Submit Enquiry</button>
-                        </form>
-                    </aside>
-                </div>
-            `;
-        }
-
-        // ADMIN LOGIN
-        function renderAdminLogin() {
-            return `
-                <section class="section-padding">
-                    <div style="max-width: 400px; margin: 0 auto;" class="about-card">
-                        <h2 class="sidebar-title" style="text-align: center;">Admin Security Portal</h2>
-                        <form onsubmit="handleAdminLogin(event)">
-                            <div class="form-group">
-                                <label>Username</label>
-                                <input type="text" id="admin-user" class="form-control" value="mahmud" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Password</label>
-                                <input type="password" id="admin-pass" class="form-control" value="1234" required>
-                            </div>
-                            <button type="submit" class="btn-primary" style="width: 100%;">Sign In</button>
-                        </form>
-                    </div>
-                </section>
-            `;
-        }
-
-        // ADMIN DASHBOARD
-        function renderAdminDashboard() {
-            const enquiries = getEnquiries();
-            const packages = getPackages();
-            const categories = getCategories();
-
-            let enquiriesHTML = enquiries.length === 0 
-                ? '<tr><td colspan="7" style="color: var(--text-muted)">No enquiries received yet.</td></tr>'
-                : enquiries.map((e, index) => `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${e.packName}</td>
-                        <td>${e.name}</td>
-                        <td>${e.email}<br>${e.mobile}</td>
-                        <td>${e.days} Days (${e.adults} Ad / ${e.children} Ch)</td>
-                        <td>${e.message}</td>
-                        <td><span style="color: var(--accent); font-weight: 600;">Pending</span></td>
-                    </tr>
-                `).join('');
-
-            let packagesHTML = packages.map((p, index) => {
-                const catName = categories.find(c => c.Cat_id === Number(p.Category))?.Cat_name || 'N/A';
-                return `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${p.Packname}</td>
-                        <td>${catName}</td>
-                        <td>₹${Number(p.Packprice).toLocaleString('en-IN')}</td>
-                        <td><button class="filter-btn" style="padding: 0.2rem 0.8rem;" onclick="deletePackage(${p.Packid})">Delete</button></td>
-                    </tr>
-                `;
-            }).join('');
-
-            let categoriesSelectHTML = categories.map(c => `
-                <option value="${c.Cat_id}">${c.Cat_name}</option>
-            `).join('');
-
-            return `
-                <div class="admin-grid">
-                    <aside class="admin-sidebar">
-                        <h3 class="sidebar-title">Management</h3>
-                        <div class="sidebar-item active" onclick="showAdminSection('enquiries')">Enquiries</div>
-                        <div class="sidebar-item" onclick="showAdminSection('packages')">Manage Packages</div>
-                        <div class="sidebar-item" onclick="showAdminSection('add-package')">Add Package</div>
-                        <div class="sidebar-item" onclick="handleAdminLogout()" style="color: #ef4444;">Log Out</div>
-                    </aside>
-                    <section class="admin-content">
-                        <!-- Enquiries Admin Section -->
-                        <div id="admin-sec-enquiries">
-                            <h2 class="sidebar-title">Manage Customer Enquiries</h2>
-                            <table class="admin-table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Package</th>
-                                        <th>Name</th>
-                                        <th>Contact</th>
-                                        <th>Details</th>
-                                        <th>Message</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${enquiriesHTML}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Packages Admin Section -->
-                        <div id="admin-sec-packages" style="display: none;">
-                            <h2 class="sidebar-title">Existing Travel Packages</h2>
-                            <table class="admin-table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Package Name</th>
-                                        <th>Category</th>
-                                        <th>Price</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${packagesHTML}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Add Package Admin Section -->
-                        <div id="admin-sec-add-package" style="display: none;">
-                            <h2 class="sidebar-title">Publish New Package</h2>
-                            <form onsubmit="handleAddPackage(event)">
-                                <div class="form-group">
-                                    <label>Package Name</label>
-                                    <input type="text" id="add-pack-name" class="form-control" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Category</label>
-                                    <select id="add-pack-cat" class="form-control">
-                                        ${categoriesSelectHTML}
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Price (INR)</label>
-                                    <input type="number" id="add-pack-price" class="form-control" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Detail Description</label>
-                                    <textarea id="add-pack-detail" class="form-control" rows="5" required></textarea>
-                                </div>
-                                <button type="submit" class="btn-primary">Add Package</button>
-                            </form>
-                        </div>
-                    </section>
-                </div>
-            `;
-        }
-
-        function showAdminSection(sec) {
-            document.querySelectorAll(".admin-sidebar .sidebar-item").forEach(item => item.classList.remove("active"));
-            event.target.classList.add("active");
-
-            document.getElementById("admin-sec-enquiries").style.display = sec === 'enquiries' ? 'block' : 'none';
-            document.getElementById("admin-sec-packages").style.display = sec === 'packages' ? 'block' : 'none';
-            document.getElementById("admin-sec-add-package").style.display = sec === 'add-package' ? 'block' : 'none';
-        }
-
-        // HANDLERS
         function handleContactSubmit(event) {
             event.preventDefault();
             alert("Thank you for contacting us! Your inquiry has been successfully received.");
@@ -457,83 +81,6 @@
             document.getElementById("contact-email").value = "";
             document.getElementById("contact-msg").value = "";
         }
-
-        function handleEnquirySubmit(event, packId) {
-            event.preventDefault();
-            const pack = getPackages().find(p => p.Packid === packId);
-            const enquiries = getEnquiries();
-            
-            const newEnquiry = {
-                packName: pack.Packname,
-                name: document.getElementById("enq-name").value,
-                gender: document.getElementById("enq-gender").value,
-                mobile: document.getElementById("enq-mobile").value,
-                email: document.getElementById("enq-email").value,
-                days: document.getElementById("enq-days").value,
-                adults: document.getElementById("enq-adults").value,
-                children: document.getElementById("enq-children").value,
-                message: document.getElementById("enq-msg").value
-            };
-
-            enquiries.push(newEnquiry);
-            localStorage.setItem("enquiries", JSON.stringify(enquiries));
-
-            alert("Your Booking Enquiry has been submitted successfully!");
-            navigateTo('category');
-        }
-
-        function handleAdminLogin(event) {
-            event.preventDefault();
-            const user = document.getElementById("admin-user").value;
-            const pass = document.getElementById("admin-pass").value;
-
-            if (user === 'mahmud' && pass === '1234') {
-                isAdminLoggedIn = true;
-                navigateTo('admin');
-            } else {
-                alert("Incorrect username or password. Please try again.");
-            }
-        }
-
-        function handleAdminLogout() {
-            isAdminLoggedIn = false;
-            navigateTo('admin');
-        }
-
-        function handleAddPackage(event) {
-            event.preventDefault();
-            const packages = getPackages();
-            const newPack = {
-                Packid: Date.now(),
-                Packname: document.getElementById("add-pack-name").value,
-                Category: Number(document.getElementById("add-pack-cat").value),
-                Subcategory: 1,
-                Packprice: Number(document.getElementById("add-pack-price").value),
-                Pic1: "images/t1.jpg",
-                Pic2: "images/t2.jpg",
-                Pic3: "images/t3.jpg",
-                Detail: document.getElementById("add-pack-detail").value
-            };
-
-            packages.push(newPack);
-            localStorage.setItem("packages", JSON.stringify(packages));
-            alert("New package published successfully!");
-            navigateTo('admin');
-        }
-
-        function deletePackage(packId) {
-            if (confirm("Are you sure you want to delete this package?")) {
-                let packages = getPackages();
-                packages = packages.filter(p => p.Packid !== packId);
-                localStorage.setItem("packages", JSON.stringify(packages));
-                navigateTo('admin');
-            }
-        }
-
-        // Initialize Router on Load
-        window.onload = () => {
-            navigateTo('home');
-        };
     </script>
 </body>
 </html>
