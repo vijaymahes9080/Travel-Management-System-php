@@ -93,11 +93,18 @@ const INITIAL_PACKAGES = [
     { Packid: 14, Packname: "Best of Canada Group Tour", Category: 7, Subcategory: 14, Packprice: 700000, Pic1: "images/t2.jpg", Pic2: "images/t3.jpg", Pic3: "images/t4.jpg", Detail: "Small group highlights tour featuring glacier trekking and bear watching." }
 ];
 
-// Initialize localStorage databases (forced sync)
-localStorage.setItem("categories", JSON.stringify(INITIAL_CATEGORIES));
-localStorage.setItem("subcategories", JSON.stringify(INITIAL_SUBCATEGORIES));
-localStorage.setItem("packages", JSON.stringify(INITIAL_PACKAGES));
-if (!localStorage.getItem("enquiries")) localStorage.setItem("enquiries", JSON.stringify([]));
+// Force update check to ensure browser db is synchronized with code
+const storedSubcats = localStorage.getItem("subcategories");
+const storedPacks = localStorage.getItem("packages");
+
+if (!storedSubcats || !storedPacks || 
+    JSON.parse(storedSubcats).length < INITIAL_SUBCATEGORIES.length || 
+    JSON.parse(storedPacks).length < INITIAL_PACKAGES.length) {
+    
+    localStorage.setItem("categories", JSON.stringify(INITIAL_CATEGORIES));
+    localStorage.setItem("subcategories", JSON.stringify(INITIAL_SUBCATEGORIES));
+    localStorage.setItem("packages", JSON.stringify(INITIAL_PACKAGES));
+}
 
 // DB Helpers
 const db = {
