@@ -1,0 +1,30 @@
+# PHP Composer dependencies
+/vendor/
+
+# Configuration and environment files
+.env
+.env.local
+.env.*.local
+
+# IDE and Editor files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.project
+.buildpath
+.settings/
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+*.db
+
+# Logs and Temp
+*.log
+/tmp/

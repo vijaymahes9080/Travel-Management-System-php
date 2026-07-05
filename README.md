@@ -17,3 +17,7 @@ A PHP & MySQL based Travel Management System styled with Bootstrap.
 - PHP (Backend)
 - MySQL (Database)
 - HTML5, CSS3, Javascript, Bootstrap (Frontend)
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
